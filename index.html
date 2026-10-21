@@ -1,275 +1,333 @@
 <!doctype html>
-<html lang="cs">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kalkulačka půjčky · Česká republika</title>
-<meta name="description" content="Bezplatná kalkulačka půjčky a hypotéky pro Českou republiku. Spočítejte si měsíční splátku, celkové úroky a splátkový kalendář v Kč.">
-<meta name="theme-color" content="#0f1222">
+<title>Loan Calculator · Czech Republic</title>
+<meta name="description" content="A free, clear loan and mortgage calculator for the Czech Republic. See your monthly payment, total interest, APR and full repayment schedule in CZK.">
+<meta name="theme-color" content="#0057ff">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0f1222; --panel:rgba(255,255,255,.06); --line:rgba(255,255,255,.12);
-  --fg:#f3f4fb; --muted:#9ea3c0; --a:#5b8cff; --b:#a35bff; --ok:#3ddc97; --warn:#ffb85c;
-  --r:22px;
+  --bg:#f3f3f0; --card:#ffffff; --ink:#0b0b0f; --muted:#6b6b76; --line:#e3e3de;
+  --blue:#0057ff; --blue2:#003fc4; --lime:#d6ff3f; --soft:#eceae4;
+  --r:28px;
 }
-@media (prefers-color-scheme:light){
-  :root:not([data-theme="dark"]){--bg:#f2f4fb;--panel:rgba(255,255,255,.8);--line:rgba(20,25,60,.12);--fg:#14183a;--muted:#5d6385}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){--bg:#0b0b0f;--card:#15151b;--ink:#f5f5f2;--muted:#9a9aa6;--line:#25252d;--soft:#1d1d25}
 }
-:root[data-theme="light"]{--bg:#f2f4fb;--panel:rgba(255,255,255,.8);--line:rgba(20,25,60,.12);--fg:#14183a;--muted:#5d6385}
+:root[data-theme="dark"]{--bg:#0b0b0f;--card:#15151b;--ink:#f5f5f2;--muted:#9a9aa6;--line:#25252d;--soft:#1d1d25}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--fg);line-height:1.55;min-height:100vh;overflow-x:hidden}
-body::before,body::after{content:"";position:fixed;z-index:-1;border-radius:50%;filter:blur(110px);opacity:.45}
-body::before{width:460px;height:460px;background:var(--a);top:-140px;left:-120px}
-body::after{width:420px;height:420px;background:var(--b);bottom:-120px;right:-100px}
-.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
-header{display:flex;justify-content:space-between;align-items:center;padding:22px 0}
-.brand{font-weight:800;font-size:1.15rem;letter-spacing:-.02em;display:flex;align-items:center;gap:10px}
-.brand i{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--a),var(--b));display:grid;place-items:center;font-style:normal;color:#fff;font-size:1rem}
-.theme{background:var(--panel);border:1px solid var(--line);color:var(--fg);border-radius:99px;padding:8px 14px;cursor:pointer;font:inherit;font-size:.85rem}
-.hero{text-align:center;padding:4vh 0 5vh}
-.hero h1{font-size:clamp(2.2rem,6vw,4rem);line-height:1.05;letter-spacing:-.04em;font-weight:800}
-.hero h1 span{background:linear-gradient(90deg,var(--a),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent}
-.hero p{color:var(--muted);max-width:560px;margin:14px auto 0;font-size:1.05rem}
-.grid{display:grid;grid-template-columns:1.1fr .9fr;gap:20px}
-@media (max-width:860px){.grid{grid-template-columns:1fr}}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:28px;backdrop-filter:blur(14px)}
-.tabs{display:flex;gap:8px;margin-bottom:22px;flex-wrap:wrap}
-.tab{border:1px solid var(--line);background:transparent;color:var(--muted);padding:8px 16px;border-radius:99px;cursor:pointer;font:inherit;font-size:.88rem;font-weight:600;transition:.2s}
-.tab.on{background:linear-gradient(135deg,var(--a),var(--b));color:#fff;border-color:transparent}
-.field{margin-bottom:24px}
-.row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:10px}
-label{font-weight:600;font-size:.92rem}
-.num{display:flex;align-items:center;gap:6px;background:rgba(127,127,160,.12);border:1px solid var(--line);border-radius:12px;padding:6px 12px}
-.num input{width:110px;background:none;border:0;color:var(--fg);font:inherit;font-weight:700;text-align:right;outline:0}
-.num span{color:var(--muted);font-size:.85rem}
-.num:focus-within{border-color:var(--a)}
-input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:9px;outline:0;cursor:pointer;
-  background:linear-gradient(90deg,var(--a),var(--b)) 0/var(--p,50%) 100% no-repeat,rgba(127,127,160,.25)}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#fff;border:4px solid var(--a);box-shadow:0 4px 14px rgba(91,140,255,.5)}
-input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:#fff;border:4px solid var(--a)}
-.hint{color:var(--muted);font-size:.78rem;margin-top:6px;display:flex;justify-content:space-between}
-.result{text-align:center}
-.result small{color:var(--muted);text-transform:uppercase;letter-spacing:.12em;font-size:.72rem;font-weight:600}
-.big{font-size:clamp(2.4rem,7vw,3.6rem);font-weight:800;letter-spacing:-.04em;line-height:1.1;margin:6px 0 20px}
-.big span{background:linear-gradient(90deg,var(--a),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent}
-.donut{width:190px;height:190px;margin:0 auto 22px;position:relative}
-.donut svg{transform:rotate(-90deg)}
-.donut circle{fill:none;stroke-width:16;transition:stroke-dasharray .6s cubic-bezier(.2,.7,.2,1)}
-.donut .mid{position:absolute;inset:0;display:grid;place-content:center;font-size:.8rem;color:var(--muted)}
-.donut .mid b{font-size:1.3rem;color:var(--fg)}
-.stats{display:grid;gap:10px;text-align:left}
-.stat{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-radius:14px;background:rgba(127,127,160,.1);font-size:.92rem}
-.stat b{font-variant-numeric:tabular-nums}
-.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px}
-.sched{margin-top:20px}
-.sched h2{font-size:1.4rem;letter-spacing:-.02em}
-.tools{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
-.tools p{color:var(--muted);font-size:.9rem}
-.btn{background:linear-gradient(135deg,var(--a),var(--b));color:#fff;border:0;border-radius:99px;padding:10px 20px;font:inherit;font-weight:600;font-size:.88rem;cursor:pointer;transition:.2s}
-.btn:hover{transform:translateY(-2px)}
-.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--fg)}
-.tablewrap{max-height:420px;overflow:auto;border-radius:14px;border:1px solid var(--line)}
-table{width:100%;border-collapse:collapse;font-size:.88rem;font-variant-numeric:tabular-nums}
-th,td{padding:11px 14px;text-align:right;white-space:nowrap}
+html{scroll-behavior:smooth}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+
+/* nav */
+nav{display:flex;justify-content:space-between;align-items:center;padding:22px 0}
+.logo{font-weight:900;font-size:1.5rem;letter-spacing:-.05em;display:flex;align-items:center;gap:10px}
+.logo b{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:var(--blue);color:#fff;font-size:.95rem;letter-spacing:0}
+.navr{display:flex;gap:10px;align-items:center}
+.chip{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--card);border-radius:99px;padding:8px 16px;font-size:.82rem;font-weight:600;color:var(--ink);text-decoration:none;cursor:pointer;font-family:inherit;transition:.2s}
+.chip:hover{border-color:var(--ink)}
+.live{width:8px;height:8px;border-radius:50%;background:#19c37d;box-shadow:0 0 0 4px rgba(25,195,125,.2)}
+
+/* hero */
+.hero{padding:7vh 0 5vh}
+.eyebrow{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:26px}
+.tag{border:1px solid var(--line);border-radius:99px;padding:6px 14px;font-size:.78rem;font-weight:600;color:var(--muted);background:var(--card)}
+h1{font-size:clamp(3.2rem,11vw,9.5rem);line-height:.88;letter-spacing:-.065em;font-weight:900}
+h1 em{font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;letter-spacing:-.04em;color:var(--blue);padding-right:.05em}
+.sub{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:38px;align-items:end}
+.sub p{max-width:480px;color:var(--muted);font-size:1.1rem}
+.sub .meta{justify-self:end;display:flex;gap:36px}
+.meta div b{display:block;font-size:2rem;letter-spacing:-.04em;line-height:1}
+.meta div span{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;font-weight:600}
+@media (max-width:760px){.sub{grid-template-columns:1fr}.sub .meta{justify-self:start}}
+
+/* project grid */
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:18px;margin-top:3vh}
+.card{background:var(--card);border-radius:var(--r);padding:30px;border:1px solid var(--line)}
+.inputs{grid-column:span 7}
+.hero-card{grid-column:span 5;background:var(--blue);color:#fff;border:0;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;min-height:420px}
+.hero-card::before{content:"";position:absolute;width:420px;height:420px;border-radius:50%;right:-160px;top:-160px;background:radial-gradient(circle,rgba(214,255,63,.55),transparent 65%)}
+.hero-card>*{position:relative}
+.lbl{font-size:.74rem;text-transform:uppercase;letter-spacing:.14em;font-weight:700;opacity:.75}
+.big{font-size:clamp(3rem,7vw,5.2rem);font-weight:900;letter-spacing:-.06em;line-height:1;margin:10px 0 6px;font-variant-numeric:tabular-nums}
+.per{opacity:.8;font-size:.95rem}
+.pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:28px}
+.pill{background:rgba(255,255,255,.16);border-radius:99px;padding:8px 14px;font-size:.82rem;font-weight:600;backdrop-filter:blur(6px)}
+.pill.lime{background:var(--lime);color:#0b0b0f}
+.bar{height:12px;border-radius:99px;background:rgba(255,255,255,.22);overflow:hidden;display:flex;margin-top:30px}
+.bar i{display:block;height:100%;transition:width .6s cubic-bezier(.2,.7,.2,1)}
+.bar .p{background:#fff}.bar .i{background:var(--lime)}
+.legend{display:flex;justify-content:space-between;font-size:.8rem;margin-top:10px;opacity:.9}
+.legend span::before{content:"";display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;background:#fff}
+.legend span:last-child::before{background:var(--lime)}
+
+.tabs{display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap}
+.tab{border:1px solid var(--line);background:transparent;color:var(--ink);padding:10px 20px;border-radius:99px;cursor:pointer;font:inherit;font-weight:700;font-size:.88rem;transition:.2s}
+.tab:hover{border-color:var(--ink)}
+.tab.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.field{margin-bottom:28px}.field:last-child{margin-bottom:0}
+.row{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
+label{font-weight:700;font-size:.95rem;letter-spacing:-.01em}
+.num{display:flex;align-items:center;gap:6px;background:var(--soft);border-radius:14px;padding:8px 14px;border:2px solid transparent}
+.num:focus-within{border-color:var(--blue)}
+.num input{width:120px;background:none;border:0;color:var(--ink);font:inherit;font-weight:800;font-size:1.05rem;text-align:right;outline:0;letter-spacing:-.02em}
+.num span{color:var(--muted);font-size:.82rem;font-weight:600}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:8px;border-radius:9px;outline:0;cursor:pointer;
+  background:linear-gradient(var(--blue),var(--blue)) 0/var(--p,50%) 100% no-repeat,var(--soft)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border-radius:50%;background:var(--card);border:6px solid var(--blue);box-shadow:0 4px 14px rgba(0,87,255,.35)}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--card);border:6px solid var(--blue)}
+.hint{color:var(--muted);font-size:.76rem;margin-top:8px;display:flex;justify-content:space-between;font-weight:500}
+
+.stats{grid-column:span 5;display:grid;gap:0}
+.stats h3,.chart h3,.sched h3{font-size:1.4rem;letter-spacing:-.03em;font-weight:800;margin-bottom:18px}
+.stat{display:flex;justify-content:space-between;align-items:center;padding:15px 0;border-bottom:1px solid var(--line);font-size:.95rem}
+.stat:last-child{border:0}
+.stat span{color:var(--muted);font-weight:500}
+.stat b{font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.chart{grid-column:span 7}
+.chart svg{width:100%;height:auto;display:block;overflow:visible}
+.chart .axis{fill:var(--muted);font-size:11px;font-family:Inter}
+.sched{grid-column:span 12}
+.tools{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.tools p{color:var(--muted);font-size:.9rem;margin-top:-10px}
+.btn{background:var(--blue);color:#fff;border:0;border-radius:99px;padding:12px 24px;font:inherit;font-weight:700;font-size:.88rem;cursor:pointer;transition:.2s}
+.btn:hover{background:var(--blue2);transform:translateY(-2px)}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn.ghost:hover{background:transparent;border-color:var(--ink)}
+.tablewrap{max-height:460px;overflow:auto;border-radius:18px;border:1px solid var(--line)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;font-variant-numeric:tabular-nums}
+th,td{padding:13px 18px;text-align:right;white-space:nowrap}
 th:first-child,td:first-child{text-align:left}
-th{position:sticky;top:0;background:var(--bg);color:var(--muted);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.08em}
-tbody tr:nth-child(even){background:rgba(127,127,160,.07)}
-.note{margin:36px 0 10px;color:var(--muted);font-size:.8rem;text-align:center;max-width:760px;margin-inline:auto}
-footer{text-align:center;color:var(--muted);font-size:.82rem;padding:10px 0 40px}
+th{position:sticky;top:0;background:var(--card);color:var(--muted);font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;border-bottom:1px solid var(--line)}
+tbody tr{border-bottom:1px solid var(--line)}tbody tr:last-child{border:0}
+tbody tr:hover{background:var(--soft)}
+@media (max-width:900px){.inputs,.hero-card,.stats,.chart{grid-column:span 12}}
+
+/* big footer statement */
+.foot{margin:10vh 0 3vh;border-top:1px solid var(--line);padding-top:6vh}
+.foot h2{font-size:clamp(2.2rem,7vw,5.5rem);line-height:.95;letter-spacing:-.06em;font-weight:900;max-width:900px}
+.foot h2 em{font-family:'Instrument Serif',serif;font-weight:400;font-style:italic;color:var(--blue)}
+.note{color:var(--muted);font-size:.82rem;max-width:760px;margin:28px 0 10px}
+.copy{color:var(--muted);font-size:.82rem;padding-bottom:40px}
+.reveal{opacity:0;transform:translateY(26px);transition:.9s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}.bar i{transition:none}}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <header>
-    <div class="brand"><i>Kč</i> Kalkulačka půjčky</div>
-    <button class="theme" id="theme" type="button" aria-label="Přepnout motiv">◐ Motiv</button>
+  <nav>
+    <div class="logo"><b>Kč</b>loanly</div>
+    <div class="navr">
+      <span class="chip"><i class="live"></i>Czech Republic · CZK</span>
+      <button class="chip" id="theme" type="button" aria-label="Toggle theme">◐ Theme</button>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="eyebrow"><span class="tag">Finance tool</span><span class="tag">Free · no sign-up</span><span class="tag">Annuity loans</span><span class="tag">2026</span></div>
+    <h1>Loans,<br>made <em>clear.</em></h1>
+    <div class="sub">
+      <p>Plan a consumer loan, a mortgage or a car loan in Czech crowns. Move a slider and watch your monthly payment, interest and full repayment schedule update instantly.</p>
+      <div class="meta">
+        <div><b id="mAmt">–</b><span>Loan amount</span></div>
+        <div><b id="mYrs">–</b><span>Years</span></div>
+      </div>
+    </div>
   </header>
 
-  <section class="hero">
-    <h1>Spočítejte si půjčku <span>za pár vteřin</span></h1>
-    <p>Zdarma a bez registrace. Zjistěte měsíční splátku, celkové úroky a podívejte se na kompletní splátkový kalendář.</p>
-  </section>
-
   <main class="grid">
-    <section class="card">
-      <div class="tabs" role="tablist" aria-label="Typ úvěru">
-        <button class="tab on" data-p="consumer" type="button">Spotřebitelský úvěr</button>
-        <button class="tab" data-p="mortgage" type="button">Hypotéka</button>
-        <button class="tab" data-p="car" type="button">Auto</button>
+    <section class="card inputs reveal">
+      <div class="tabs" role="tablist" aria-label="Loan type">
+        <button class="tab on" data-p="consumer" type="button">Consumer loan</button>
+        <button class="tab" data-p="mortgage" type="button">Mortgage</button>
+        <button class="tab" data-p="car" type="button">Car loan</button>
       </div>
 
       <div class="field">
-        <div class="row"><label for="amount">Výše půjčky</label>
-          <div class="num"><input id="amountN" type="number" inputmode="numeric"><span>Kč</span></div></div>
+        <div class="row"><label for="amount">Loan amount</label>
+          <div class="num"><input id="amountN" type="number" inputmode="numeric"><span>CZK</span></div></div>
         <input id="amount" type="range">
         <div class="hint"><span id="amin"></span><span id="amax"></span></div>
       </div>
-
       <div class="field">
-        <div class="row"><label for="years">Doba splácení</label>
-          <div class="num"><input id="yearsN" type="number" inputmode="decimal" step="0.5"><span>let</span></div></div>
+        <div class="row"><label for="years">Repayment period</label>
+          <div class="num"><input id="yearsN" type="number" inputmode="decimal" step="0.5"><span>years</span></div></div>
         <input id="years" type="range">
         <div class="hint"><span id="ymin"></span><span id="ymax"></span></div>
       </div>
-
       <div class="field">
-        <div class="row"><label for="rate">Úroková sazba p. a.</label>
+        <div class="row"><label for="rate">Interest rate p.a.</label>
           <div class="num"><input id="rateN" type="number" inputmode="decimal" step="0.01"><span>%</span></div></div>
         <input id="rate" type="range">
         <div class="hint"><span id="rmin"></span><span id="rmax"></span></div>
       </div>
-
-      <div class="field" style="margin-bottom:0">
-        <div class="row"><label for="fee">Jednorázový poplatek (zpracování)</label>
-          <div class="num"><input id="feeN" type="number" inputmode="numeric" min="0"><span>Kč</span></div></div>
+      <div class="field">
+        <div class="row"><label for="fee">One-off processing fee</label>
+          <div class="num"><input id="feeN" type="number" inputmode="numeric" min="0"><span>CZK</span></div></div>
         <input id="fee" type="range" min="0" max="20000" step="100">
       </div>
     </section>
 
-    <aside class="card result" aria-live="polite">
-      <small>Měsíční splátka</small>
-      <div class="big"><span id="monthly">0 Kč</span></div>
-      <div class="donut">
-        <svg viewBox="0 0 120 120" width="190" height="190">
-          <circle cx="60" cy="60" r="50" stroke="rgba(127,127,160,.25)"/>
-          <circle id="dPrin" cx="60" cy="60" r="50" stroke="#5b8cff" stroke-dasharray="0 314"/>
-          <circle id="dInt" cx="60" cy="60" r="50" stroke="#ffb85c" stroke-dasharray="0 314"/>
-        </svg>
-        <div class="mid"><span>úroky tvoří</span><b id="pct">0 %</b></div>
+    <aside class="card hero-card reveal" aria-live="polite">
+      <div>
+        <div class="lbl">Monthly payment</div>
+        <div class="big" id="monthly">–</div>
+        <div class="per" id="perInfo"></div>
+        <div class="pills"><span class="pill lime" id="pApr">APR –</span><span class="pill" id="pInt">–</span></div>
       </div>
-      <div class="stats">
-        <div class="stat"><span><i class="dot" style="background:#5b8cff"></i>Jistina</span><b id="sPrin"></b></div>
-        <div class="stat"><span><i class="dot" style="background:#ffb85c"></i>Úroky celkem</span><b id="sInt"></b></div>
-        <div class="stat"><span>Poplatek</span><b id="sFee"></b></div>
-        <div class="stat"><span>Celkem zaplatíte</span><b id="sTotal"></b></div>
-        <div class="stat"><span>Přibližné RPSN</span><b id="sRpsn"></b></div>
+      <div>
+        <div class="bar"><i class="p" id="barP"></i><i class="i" id="barI"></i></div>
+        <div class="legend"><span id="lP">Principal</span><span id="lI">Interest</span></div>
       </div>
     </aside>
+
+    <section class="card stats reveal">
+      <h3>Breakdown</h3>
+      <div class="stat"><span>Principal</span><b id="sPrin"></b></div>
+      <div class="stat"><span>Total interest</span><b id="sInt"></b></div>
+      <div class="stat"><span>Processing fee</span><b id="sFee"></b></div>
+      <div class="stat"><span>Total repaid</span><b id="sTotal"></b></div>
+      <div class="stat"><span>Approx. APR (RPSN)</span><b id="sApr"></b></div>
+    </section>
+
+    <section class="card chart reveal">
+      <h3>Remaining balance over time</h3>
+      <svg id="chart" viewBox="0 0 640 240" role="img" aria-label="Remaining balance chart"></svg>
+    </section>
+
+    <section class="card sched reveal">
+      <div class="tools">
+        <div><h3>Repayment schedule</h3><p id="schedInfo"></p></div>
+        <div style="display:flex;gap:8px">
+          <button class="btn ghost" id="toggle" type="button">View by year</button>
+          <button class="btn" id="csv" type="button">Download CSV</button>
+        </div>
+      </div>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th id="thPeriod">Month</th><th>Payment</th><th>Principal</th><th>Interest</th><th>Balance</th></tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+    </section>
   </main>
 
-  <section class="card sched">
-    <div class="tools">
-      <div><h2>Splátkový kalendář</h2><p id="schedInfo"></p></div>
-      <div style="display:flex;gap:8px">
-        <button class="btn ghost" id="toggle" type="button">Zobrazit po letech</button>
-        <button class="btn" id="csv" type="button">Stáhnout CSV</button>
-      </div>
-    </div>
-    <div class="tablewrap">
-      <table>
-        <thead><tr><th id="thPeriod">Měsíc</th><th>Splátka</th><th>Jistina</th><th>Úrok</th><th>Zůstatek</th></tr></thead>
-        <tbody id="rows"></tbody>
-      </table>
-    </div>
-  </section>
-
-  <p class="note">Výpočet je pouze orientační a nepředstavuje nabídku úvěru. Používá anuitní splácení s měsíčními splátkami. Skutečné podmínky, včetně RPSN, stanoví poskytovatel. Před uzavřením smlouvy si vždy ověřte nabídku u banky nebo nebankovní společnosti.</p>
-  <footer>© <span id="yr"></span> Kalkulačka půjčky · Česká republika</footer>
+  <footer class="foot">
+    <h2>Know the cost <em>before</em> you sign.</h2>
+    <p class="note">For illustration only; this is not a loan offer. Calculations use annuity repayment with monthly instalments. Actual terms, including the APR (RPSN), are set by the lender. Always compare offers from banks and non-bank providers before signing a contract.</p>
+    <p class="copy">© <span id="yr"></span> loanly · Made for the Czech Republic</p>
+  </footer>
 </div>
 
 <script>
 const $ = id => document.getElementById(id);
-const czk = new Intl.NumberFormat('cs-CZ', {style:'currency', currency:'CZK', maximumFractionDigits:0});
-const pctFmt = new Intl.NumberFormat('cs-CZ', {minimumFractionDigits:2, maximumFractionDigits:2});
-const fmt = n => czk.format(Math.round(n));
+const nf = new Intl.NumberFormat('en-GB', {maximumFractionDigits:0});
+const fmt = n => 'CZK ' + nf.format(Math.round(n));
+const pct = n => new Intl.NumberFormat('en-GB', {minimumFractionDigits:2, maximumFractionDigits:2}).format(n) + '%';
 
-// Typické rozsahy pro český trh
+// Typical ranges for the Czech market: [min, max, step, default]
 const PRESETS = {
-  consumer: {amount:[10000, 1000000, 5000, 250000], years:[1, 10, .5, 5],  rate:[3, 20, .1, 9.9],  fee:0},
-  mortgage: {amount:[500000, 20000000, 50000, 4000000], years:[5, 40, 1, 30], rate:[3, 9, .01, 5.2], fee:0},
-  car:      {amount:[50000, 3000000, 10000, 600000],  years:[1, 8, .5, 5],   rate:[3, 14, .1, 7.5], fee:3000}
+  consumer: {amount:[10000, 1000000, 5000, 250000],      years:[1, 10, .5, 5],  rate:[3, 20, .1, 9.9], fee:0},
+  mortgage: {amount:[500000, 20000000, 50000, 4000000],  years:[5, 40, 1, 30],  rate:[3, 9, .01, 5.2], fee:0},
+  car:      {amount:[50000, 3000000, 10000, 600000],     years:[1, 8, .5, 5],   rate:[3, 14, .1, 7.5], fee:3000}
 };
-let state = {}, byYear = false, schedule = [];
+let byYear = false, schedule = [], preset = 'consumer';
 
 function setRange(id, [min, max, step, val]) {
-  const r = $(id); r.min = min; r.max = max; r.step = step; r.value = val;
-  $(id + 'N').min = min; $(id + 'N').max = max; $(id + 'N').step = step; $(id + 'N').value = val;
+  for (const el of [$(id), $(id + 'N')]) { el.min = min; el.max = max; el.step = step; el.value = val; }
 }
-function paint(r) { r.style.setProperty('--p', ((r.value - r.min) / (r.max - r.min) * 100) + '%'); }
+const paint = r => r.style.setProperty('--p', ((r.value - r.min) / (r.max - r.min) * 100) + '%');
 
 function applyPreset(k) {
+  preset = k;
   const p = PRESETS[k];
   setRange('amount', p.amount); setRange('years', p.years); setRange('rate', p.rate);
   $('fee').value = $('feeN').value = p.fee;
   $('amin').textContent = fmt(p.amount[0]); $('amax').textContent = fmt(p.amount[1]);
-  $('ymin').textContent = p.years[0] + ' r.'; $('ymax').textContent = p.years[1] + ' let';
-  $('rmin').textContent = p.rate[0] + ' %'; $('rmax').textContent = p.rate[1] + ' %';
+  $('ymin').textContent = p.years[0] + (p.years[0] === 1 ? ' year' : ' years'); $('ymax').textContent = p.years[1] + ' years';
+  $('rmin').textContent = p.rate[0] + '%'; $('rmax').textContent = p.rate[1] + '%';
   update();
 }
 
-// Anuitní splátka
-function annuity(P, ratePA, n) {
-  const i = ratePA / 100 / 12;
-  return i === 0 ? P / n : P * i / (1 - Math.pow(1 + i, -n));
-}
+const annuity = (P, ratePA, n) => { const i = ratePA / 1200; return i === 0 ? P / n : P * i / (1 - Math.pow(1 + i, -n)); };
 
-// Přibližné RPSN: roční sazba, při které se současná hodnota splátek rovná vyplacené částce minus poplatek
-function rpsn(P, pay, n, fee) {
-  const net = P - fee;
-  let lo = 0, hi = 1;
+// Approx. APR: annual rate at which the PV of payments equals the amount received (loan minus fee)
+function apr(P, pay, n, fee) {
+  const net = P - fee; let lo = 0, hi = 1;
   for (let k = 0; k < 60; k++) {
     const m = (lo + hi) / 2;
     const pv = m === 0 ? pay * n : pay * (1 - Math.pow(1 + m, -n)) / m;
     pv > net ? lo = m : hi = m;
   }
-  const monthly = (lo + hi) / 2;
-  return (Math.pow(1 + monthly, 12) - 1) * 100;
+  return (Math.pow(1 + (lo + hi) / 2, 12) - 1) * 100;
 }
 
 function update() {
-  const P = +$('amountN').value || 0, yrs = +$('yearsN').value || 0,
-        rate = +$('rateN').value || 0, fee = +$('feeN').value || 0;
-  const n = Math.max(1, Math.round(yrs * 12));
-  const pay = annuity(P, rate, n);
+  const P = +$('amountN').value || 0, yrs = +$('yearsN').value || 0, rate = +$('rateN').value || 0, fee = +$('feeN').value || 0;
+  const n = Math.max(1, Math.round(yrs * 12)), i = rate / 1200, pay = annuity(P, rate, n);
 
-  schedule = [];
-  let bal = P, totalInt = 0;
-  const i = rate / 100 / 12;
+  schedule = []; let bal = P, totalInt = 0;
   for (let m = 1; m <= n; m++) {
     const int = bal * i, prin = Math.min(bal, pay - int);
     bal = Math.max(0, bal - prin); totalInt += int;
     schedule.push({m, pay: prin + int, prin, int, bal});
   }
-  const total = P + totalInt + fee;
+  const total = P + totalInt + fee, a = P > 0 ? apr(P, pay, n, fee) : 0;
+  const share = P + totalInt ? totalInt / (P + totalInt) * 100 : 0;
 
   $('monthly').textContent = fmt(pay);
+  $('perInfo').textContent = `for ${n} months`;
+  $('pApr').textContent = 'APR ' + pct(a);
+  $('pInt').textContent = Math.round(share) + '% interest';
+  $('barP').style.width = (100 - share) + '%'; $('barI').style.width = share + '%';
+  $('lP').textContent = 'Principal ' + fmt(P); $('lI').textContent = 'Interest ' + fmt(totalInt);
+  $('mAmt').textContent = P >= 1e6 ? (P / 1e6).toFixed(P % 1e6 ? 1 : 0) + 'M' : nf.format(P);
+  $('mYrs').textContent = Number.isInteger(yrs) ? yrs : yrs.toFixed(1);
   $('sPrin').textContent = fmt(P); $('sInt').textContent = fmt(totalInt);
-  $('sFee').textContent = fmt(fee); $('sTotal').textContent = fmt(total);
-  $('sRpsn').textContent = P > 0 ? pctFmt.format(rpsn(P, pay, n, fee)) + ' %' : '–';
+  $('sFee').textContent = fmt(fee); $('sTotal').textContent = fmt(total); $('sApr').textContent = pct(a);
 
-  const share = total ? totalInt / (P + totalInt) : 0, C = 314;
-  $('dPrin').setAttribute('stroke-dasharray', `${(1 - share) * C} ${C}`);
-  $('dInt').setAttribute('stroke-dasharray', `${share * C} ${C}`);
-  $('dInt').setAttribute('stroke-dashoffset', -(1 - share) * C);
-  $('pct').textContent = Math.round(share * 100) + ' %';
+  ['amount', 'years', 'rate', 'fee'].forEach(id => paint($(id)));
+  drawChart(P); renderTable(n);
+}
 
-  ['amount','years','rate','fee'].forEach(id => paint($(id)));
-  renderTable(n);
+function drawChart(P) {
+  const W = 640, H = 240, pl = 8, pb = 26, pt = 10, n = schedule.length;
+  const x = m => pl + (m / n) * (W - pl - 8), y = b => pt + (1 - (P ? b / P : 0)) * (H - pt - pb);
+  let d = `M${x(0)},${y(P)}`;
+  schedule.forEach(s => d += ` L${x(s.m).toFixed(1)},${y(s.bal).toFixed(1)}`);
+  const area = d + ` L${x(n)},${H - pb} L${x(0)},${H - pb} Z`;
+  const yrs = n / 12, step = yrs > 20 ? 5 : yrs > 8 ? 2 : 1;
+  let ticks = '';
+  for (let t = 0; t <= yrs + 1e-9; t += step) ticks += `<text class="axis" x="${x(t * 12)}" y="${H - 6}" text-anchor="${t === 0 ? 'start' : 'middle'}">${t === 0 ? '0' : t + 'y'}</text>`;
+  $('chart').innerHTML =
+    `<defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0057ff" stop-opacity=".35"/><stop offset="1" stop-color="#0057ff" stop-opacity="0"/></linearGradient></defs>
+     <line x1="${pl}" x2="${W - 8}" y1="${H - pb}" y2="${H - pb}" stroke="currentColor" opacity=".15"/>
+     <path d="${area}" fill="url(#g)"/><path d="${d}" fill="none" stroke="#0057ff" stroke-width="3" stroke-linejoin="round"/>${ticks}`;
 }
 
 function renderTable(n) {
   const y = n / 12;
-  $('schedInfo').textContent = `${n} měsíčních splátek (${(Number.isInteger(y) ? y : y.toFixed(1).replace('.', ','))} let)`;
-  $('thPeriod').textContent = byYear ? 'Rok' : 'Měsíc';
+  $('schedInfo').textContent = `${n} monthly payments (${Number.isInteger(y) ? y : y.toFixed(1)} years)`;
+  $('thPeriod').textContent = byYear ? 'Year' : 'Month';
   let data = schedule;
   if (byYear) {
     data = [];
     schedule.forEach(s => {
       const yr = Math.ceil(s.m / 12);
-      let r = data[yr - 1];
-      if (!r) r = data[yr - 1] = {m: yr, pay: 0, prin: 0, int: 0, bal: 0};
+      const r = data[yr - 1] || (data[yr - 1] = {m: yr, pay: 0, prin: 0, int: 0, bal: 0});
       r.pay += s.pay; r.prin += s.prin; r.int += s.int; r.bal = s.bal;
     });
   }
-  $('rows').innerHTML = data.map(r =>
-    `<tr><td>${r.m}</td><td>${fmt(r.pay)}</td><td>${fmt(r.prin)}</td><td>${fmt(r.int)}</td><td>${fmt(r.bal)}</td></tr>`).join('');
+  $('rows').innerHTML = data.map(r => `<tr><td>${r.m}</td><td>${fmt(r.pay)}</td><td>${fmt(r.prin)}</td><td>${fmt(r.int)}</td><td>${fmt(r.bal)}</td></tr>`).join('');
 }
 
-// Propojení posuvníků a číselných polí
-['amount','years','rate','fee'].forEach(id => {
+['amount', 'years', 'rate', 'fee'].forEach(id => {
   $(id).addEventListener('input', () => { $(id + 'N').value = $(id).value; update(); });
   $(id + 'N').addEventListener('input', () => { $(id).value = $(id + 'N').value; update(); });
 });
@@ -278,22 +336,22 @@ document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () =>
   t.classList.add('on'); applyPreset(t.dataset.p);
 }));
 $('toggle').addEventListener('click', () => {
-  byYear = !byYear;
-  $('toggle').textContent = byYear ? 'Zobrazit po měsících' : 'Zobrazit po letech';
-  renderTable(schedule.length);
+  byYear = !byYear; $('toggle').textContent = byYear ? 'View by month' : 'View by year'; renderTable(schedule.length);
 });
 $('csv').addEventListener('click', () => {
-  const head = 'Mesic;Splatka;Jistina;Urok;Zustatek\n';
-  const body = schedule.map(s => [s.m, s.pay, s.prin, s.int, s.bal].map((v, k) => k ? v.toFixed(2).replace('.', ',') : v).join(';')).join('\n');
+  const head = 'Month,Payment,Principal,Interest,Balance\n';
+  const body = schedule.map(s => [s.m, s.pay.toFixed(2), s.prin.toFixed(2), s.int.toFixed(2), s.bal.toFixed(2)].join(',')).join('\n');
   const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob(['﻿' + head + body], {type:'text/csv;charset=utf-8'}));
-  a.download = 'splatkovy-kalendar.csv'; a.click(); URL.revokeObjectURL(a.href);
+  a.href = URL.createObjectURL(new Blob([head + body], {type: 'text/csv;charset=utf-8'}));
+  a.download = 'repayment-schedule.csv'; a.click(); URL.revokeObjectURL(a.href);
 });
 $('theme').addEventListener('click', () => {
   const dark = matchMedia('(prefers-color-scheme:dark)').matches;
   const cur = document.documentElement.dataset.theme || (dark ? 'dark' : 'light');
   document.documentElement.dataset.theme = cur === 'dark' ? 'light' : 'dark';
 });
+const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), {threshold: .1});
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 $('yr').textContent = new Date().getFullYear();
 applyPreset('consumer');
 </script>
